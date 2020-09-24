@@ -1,0 +1,14 @@
+{
+  "name": "dotenv",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Lilit Karapetyan",
+  "license": "ISC",
+  "dependencies": {
+    "n-readlines": "^1.0.0"
+  }
+}
