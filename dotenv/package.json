@@ -8,7 +8,5 @@
   },
   "author": "Lilit Karapetyan",
   "license": "ISC",
-  "dependencies": {
-    "n-readlines": "^1.0.0"
-  }
+  "dependencies": {}
 }
