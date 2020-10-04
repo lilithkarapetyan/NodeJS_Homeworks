@@ -26,6 +26,12 @@ const signUp = async function (req, res, next) {
             });
         }
 
+        if (!(password.length >= 2)) {
+            return res.status(400).json({
+                message: 'Please Enter a valid name'
+            });
+        }
+
         const hashedPassword = await bcrypt.hash(password, process.env.SALTROUNDS * 1);
         const user = {
             id: uuid.v4(),
@@ -59,7 +65,9 @@ const signIn = async function (req, res, next) {
         const { email, password } = req.body;
         const db = JSON.parse(await fs.readFile('./db.json'));
         const user = db.find(u => u.email === email);
+
         const isAuth = bcrypt.compare(password, user.password);
+
         if (!isAuth) {
             return res.status(400).json({
                 message: 'Invalid email or password'
