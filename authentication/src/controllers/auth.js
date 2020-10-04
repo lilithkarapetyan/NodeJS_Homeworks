@@ -6,11 +6,26 @@ const uuid = require('uuid');
 const signUp = async function (req, res, next) {
     try {
         const { email, password, name } = req.body;
+
         if (!(email && password && name)) {
             return res.status(400).json({
                 message: 'All the fields are required'
             });
         }
+
+        if (!(email.contains('@') &&
+            email.split('@')[1].contains('.'))) {
+            return res.status(400).json({
+                message: 'Please Enter a valid email address'
+            });
+        }
+
+        if (!(password.length >= 8)) {
+            return res.status(400).json({
+                message: 'The password must be at least 8 characters long'
+            });
+        }
+
         const hashedPassword = await bcrypt.hash(password, process.env.SALTROUNDS * 1);
         const user = {
             id: uuid.v4(),
@@ -32,7 +47,7 @@ const signUp = async function (req, res, next) {
         return res.status(200).json({ user });
     }
     catch (err) {
-        console.log(err)
+        console.log(err);
         return res.status(500).json({
             message: 'Internal Server Error'
         });
@@ -55,7 +70,7 @@ const signIn = async function (req, res, next) {
         return res.status(200).json({ token });
     }
     catch (err) {
-        console.log(err)
+        console.log(err);
         return res.status(500).json({
             message: 'Internal Server Error'
         });
