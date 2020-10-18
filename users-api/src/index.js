@@ -15,7 +15,7 @@ app.use(express.json());
 
 app.use('/api', routes);
 app.use((err, req, res, next) => {
-    if(err.isCustom){
+    if (err.isCustom) {
         return res.status(err.status).json({
             message: err.message,
         });
@@ -31,5 +31,5 @@ app.use((err, req, res, next) => {
 const PORT = 3000;
 
 app.listen(process.env.port || PORT, () => {
-  console.log(`App listening at http://localhost:${port}`)
+    console.log('Running ...');
 });

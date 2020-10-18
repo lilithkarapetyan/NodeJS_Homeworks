@@ -1,28 +1,46 @@
+const path = require('path');
 const uuid = require('uuid');
 const fs = require('fs').promises;
 const {
     NotFoundError,
     BadRequestError,
-} = require('../Errors');
+} = require('../errors');
 
 let db;
 
 const _save = async () => {
     const dbText = JSON.stringify(db);
-    await fs.writeFile('./db.json', dbText);
+    await fs.writeFile(path.join(__dirname, 'db.json'), dbText);
 };
 
 const connect = async () => {
-    db = JSON.parse(await fs.readFile('./db.json'));
-    if (!db)
-        db = {};
+    try {
+        const readDB = await fs.readFile(path.join(__dirname, 'db.json'));
+        if (!readDB.toString()) {
+            db = {};
+            await _save();
+        }
+        else {
+            db = JSON.parse(readDB.toString());
+        }
+    }
+    catch (err) {
+        throw err;
+    }
 };
 
 const create = async (user) => {
+    const { email } = user;
+    const foundUser = await find({ email });
+    if (foundUser[0]) {
+        throw new BadRequestError('User already exists');
+    }
     const userId = uuid.v4();
     db[userId] = user;
     await _save();
-    return user;
+    const savedUser = { ...db[userId] };
+    savedUser.id = userId;
+    return savedUser;
 };
 
 const update = async (user) => {
@@ -35,7 +53,9 @@ const update = async (user) => {
         throw new NotFoundError('User not found');
     }
 
+    
     for (key in user) {
+        if(user[key] !== null && user[key] !== undefined)
         db[id][key] = user[key];
     }
 
@@ -45,8 +65,8 @@ const update = async (user) => {
 
 const get = async () => {
     const users = [];
-    db.entries().forEach(u => {
-        const user = u[1];
+    Object.entries(db).forEach(u => {
+        const user = { ...u[1] };
         user.id = u[0];
         user.password = undefined;
         users.push(user);
@@ -59,12 +79,13 @@ const getOneById = async (id) => {
     if (!user) {
         throw new NotFoundError('User not found');
     }
+    user.id = id;
     return user;
 };
 
 const find = async (criteria = {}) => {
 
-    let users = db.entries()
+    let users = Object.entries(db)
         .filter(([id, user]) => {
             for (let key in criteria) {
                 if (user[key] !== criteria[key]) {
@@ -75,7 +96,7 @@ const find = async (criteria = {}) => {
         }).map(([id, user]) => {
             user.id = id;
             return user;
-        })
+        });
 
     return users;
 };

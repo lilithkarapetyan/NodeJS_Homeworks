@@ -1,7 +1,10 @@
 class ErrorBase extends Error{
-    isCustom = true;
     constructor(status, message){
-        status = status;
-        message = message;
+        super(message);
+        this.isCustom = true;
+        this.status = status;
+        this.message = message;
     }
 }
+
+module.exports = ErrorBase;

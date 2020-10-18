@@ -5,9 +5,11 @@ const { userController: {
     updateMe,
 } } = require('../controllers');
 
-const router = Router();
-router.get('', getAll);
-router.get('me', getMe);
-router.put('me', updateMe);
+const { validateUserMiddleware } = require('../middlewares');
 
-module.exports = userRouter;
+const router = Router();
+router.get('/', getAll);
+router.get('/me', getMe);
+router.put('/me', validateUserMiddleware({ updating: true }), updateMe);
+
+module.exports = router;

@@ -4,8 +4,10 @@ const { authController: {
     signUp,
 } } = require('../controllers');
 
-const router = Router();
-router.post('signin', signIn);
-router.post('signup', signUp);
+const { validateUserMiddleware } = require('../middlewares');
 
-module.exports = authRouter;
+const router = Router();
+router.post('/signin', signIn);
+router.post('/signup', validateUserMiddleware(), signUp);
+
+module.exports = router;

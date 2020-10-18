@@ -1,14 +1,20 @@
-const DB = require('../DB');
+const bcrypt = require('bcrypt');
 const JWT = require('jsonwebtoken');
-const { BadRequestError } = require("../Errors");
+
+const DB = require('../DB');
+const { BadRequestError } = require("../errors");
 
 const signIn = async (req, res, next) => {
     try {
         const { email, password } = req.body;
-        const { id, realPassword } = DB.find({ email })[0] || {};
+        const foundUser = (await DB.find({ email }))[0]
+        const { id, password: realPassword } = foundUser || {};
 
-        const isAuth = bcrypt.compare(password, realPassword);
+        if (!password || !realPassword) {
+            return next(new BadRequestError('Invalid email or password'));
+        }
 
+        const isAuth = await bcrypt.compare(password, realPassword);
         if (!isAuth) {
             return next(new BadRequestError('Invalid email or password'));
         }
@@ -17,20 +23,31 @@ const signIn = async (req, res, next) => {
         return res.status(200).json({ token });
     }
     catch (err) {
-        next(err);
+        return next(err);
     }
 };
 
-const signUpIn = (req, res, next) => {
+const signUp = async (req, res, next) => {
     try {
+        const { email, password, name } = req.body;
 
+        const hashedPassword = await bcrypt.hash(password, process.env.SALTROUNDS * 1);
+        const user = {
+            email,
+            password: hashedPassword,
+            name,
+        };
+
+        const createdUser = { ...(await DB.create(user))};
+        createdUser.password = undefined;
+        return res.status(200).json({ user: createdUser });
     }
     catch (err) {
-        next(err);
+        return next(err);
     }
 };
 
 module.exports = {
     signIn,
-    signUpIn,
+    signUp,
 };
