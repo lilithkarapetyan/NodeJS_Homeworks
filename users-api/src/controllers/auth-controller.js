@@ -19,7 +19,7 @@ const signIn = async (req, res, next) => {
             return next(new BadRequestError('Invalid email or password'));
         }
 
-        const token = await JWT.sign(id, process.env.JWTSECRET);
+        const token = await JWT.sign(id, process.env.JWTSECRET || "SECRET");
         return res.status(200).json({ token });
     }
     catch (err) {
@@ -31,7 +31,7 @@ const signUp = async (req, res, next) => {
     try {
         const { email, password, name } = req.body;
 
-        const hashedPassword = await bcrypt.hash(password, process.env.SALTROUNDS * 1);
+        const hashedPassword = await bcrypt.hash(password, process.env.SALTROUNDS * 1 || 1);
         const user = {
             email,
             password: hashedPassword,
