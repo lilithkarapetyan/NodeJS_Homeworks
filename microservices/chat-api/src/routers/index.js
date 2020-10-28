@@ -1,16 +1,19 @@
-const Router = require('@koa/router');
+
+const Router = require('koa-trie-router');
+const mount = require('koa-mount');
 
 const authRouter = require('./auth-router');
 const userRouter = require('./user-router');
 
-const { errorHandlerMiddlware } = require('../middlewares');
+const { errorHandlerMiddleware } = require('../middlewares');
 
 const router = new Router({
     prefix: '/api',
 });
 
-router.use(errorHandlerMiddlware);
-router.use(authRouter);
-router.use(userRouter);
-
-module.exports = router;
+module.exports = () => {
+    router.use(errorHandlerMiddleware);
+    router.use(mount('/auth', authRouter()));
+    router.use(mount('/users', userRouter()));
+    return router.middleware();
+};

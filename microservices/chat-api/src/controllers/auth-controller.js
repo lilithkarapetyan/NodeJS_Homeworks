@@ -28,7 +28,7 @@ const signIn = async ({ response: res, request: req }, next) => {
     }
 };
 
-const signUp = async (req, res, next) => {
+const signUp = async ({request: req, response: res}, next) => {
     try {
         const { email, password, name } = req.body;
 

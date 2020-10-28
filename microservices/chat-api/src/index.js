@@ -4,19 +4,19 @@ dotenv.config();
 const Koa = require('koa');
 const morgan = require('morgan');
 const koaJSON = require('koa-json');
-const bodyParser = require('body-parser')
-
+const bodyParser = require('koa-bodyparser')
+const mount = require('koa-mount');
 const DB = require('./DB');
-const routes = require('./routers');
+const router = require('./routers');
 
 DB.connect();
 const app = new Koa();
 
 app.use(koaJSON());
-app.use(morgan('dev'));
-app.use(bodyParser.json());
+// app.use(morgan('dev'));
+app.use(bodyParser());
 
-app.use(routes.routes());
+app.use(mount('/api', router()));
 
 const PORT = 3001;
 

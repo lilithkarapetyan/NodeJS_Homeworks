@@ -1,17 +1,15 @@
-const Router = require('@koa/router');
+const Router = require('koa-trie-router');
 const { authController: {
     signIn,
     signUp,
 } } = require('../controllers');
 
-const { authMiddleware, validateUserMiddleware } = require('../middlewares');
+const { validateUserMiddleware } = require('../middlewares');
 
-const router = new Router({
-    prefix: '/auth',
-});
+const router = new Router();
 
-router.use(authMiddleware);
-router.post('/signin', signIn);
-router.post('/signup', validateUserMiddleware(), signUp);
-
-module.exports = router;
+module.exports = () => {
+    router.post('/signin', signIn);
+    router.post('/signup', validateUserMiddleware(), signUp);
+    return router.middleware();
+};
