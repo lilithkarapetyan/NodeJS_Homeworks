@@ -2,7 +2,6 @@ const { BadRequestError } = require('../errors');
 const validateUserMiddleware = ({ updating = false } = {}) => {
     return async ({ response: res, request: req }, next) => {
         try {
-            console.log(req)
             const { email, password, name } = req.body;
 
             if (!(email && password && name) && !updating) {

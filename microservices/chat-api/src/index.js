@@ -2,18 +2,19 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const Koa = require('koa');
-const morgan = require('morgan');
-const koaJSON = require('koa-json');
-const bodyParser = require('koa-bodyparser')
+const CORS = require('@koa/cors');
 const mount = require('koa-mount');
+const koaJSON = require('koa-json');
+const bodyParser = require('koa-bodyparser');
+
 const DB = require('./DB');
 const router = require('./routers');
 
 DB.connect();
 const app = new Koa();
 
+app.use(CORS());
 app.use(koaJSON());
-// app.use(morgan('dev'));
 app.use(bodyParser());
 
 app.use(mount('/api', router()));

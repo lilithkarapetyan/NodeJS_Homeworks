@@ -9,14 +9,12 @@ class SignUp extends Component {
         fields: [
             { id: "email", title: "E-mail", type: "email", validation: () => validateEmail(this.state.user.email)},
             { id: "password", title: "Password", type: "password" },
-            { id: "firstName", title: "First Name", type: "text" },
-            { id: "lastName", title: "Last name", type: "text" },
+            { id: "name", title: "Full Name", type: "text" },
         ],
         user: {
             email: undefined,
             password: "",
-            firstName: "",
-            lastName: "",
+            name: "",
         }
     }
 

@@ -2,7 +2,7 @@ import axios from '../axios'
 
 export const register = async (userData) => {
     try {
-        const res = await axios.post("/v1/users/register", userData);
+        const res = await axios.post("/auth/signup", userData);
         return res.data;
     }
     catch (e) {
@@ -16,7 +16,7 @@ export const register = async (userData) => {
 
 export const login = async (userData) => {
     try {
-        const res = await axios.post("/v1/users/login", userData);
+        const res = await axios.post("/auth/signin", userData);
         return res.data;
     }
     catch (e) {
@@ -29,7 +29,7 @@ export const login = async (userData) => {
 
 export const getUser = async () => {
     try {
-        const res = await axios.get("/v1/users");
+        const res = await axios.get("/users");
         return res.data;
     }
     catch (e) {
@@ -42,7 +42,7 @@ export const getUser = async () => {
 
 export const updateUser = async (user) => {
     try {
-        const res = await axios.put("/v1/users/update", user);
+        const res = await axios.put("/users/updateMe", user);
         return res.data;
     }
     catch (e) {

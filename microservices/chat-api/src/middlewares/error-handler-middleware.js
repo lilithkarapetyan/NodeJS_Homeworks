@@ -1,21 +1,13 @@
-const errorHandlerMiddleware = async ({ response: res, request: req }, next) => {
+const errorHandlerMiddleware = async (ctx, next) => {
     try {
         await next();
     } catch (err) {
-        if (err.expose) {
-            res.status = err.status;
-            res.body = {
-                message: err.message,
-            };
-            return;
-        }
-
-        console.log(err);
-
-        res.status = 500;
-        res.body = {
-            message: 'Internal server error',
+        console.log(err)
+        ctx.status = err.status || 500;
+        ctx.body = {
+            message: err.message || 'Internal server error',
         };
+        ctx.app.emit('error', err, ctx);
     }
 }
 

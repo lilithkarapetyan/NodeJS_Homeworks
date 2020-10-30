@@ -9,19 +9,7 @@ class NavLayout extends Component {
     state = {
         showSideDrawer: false,
         showModal: false,
-        navItems: [
-            {
-                name: "Topics",
-                path: "/topics"
-            },
-            {
-                name: "Projects",
-                path: "/projects"
-            },
-            {
-                name: "Teams",
-                path: "/teams"
-            }]
+        navItems: []
     }
 
 
