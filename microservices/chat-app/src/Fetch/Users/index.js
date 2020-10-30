@@ -8,7 +8,7 @@ export const register = async (userData) => {
     catch (e) {
         return {
             data: [],
-            error: e.message
+            error: e?.response?.data?.message
         };
     }
 }
@@ -22,7 +22,7 @@ export const login = async (userData) => {
     catch (e) {
         return {
             data: [],
-            error: e.message
+            error: e?.response?.data?.message
         };
     }
 }
@@ -35,7 +35,7 @@ export const getUser = async () => {
     catch (e) {
         return {
             data: [],
-            error: e.message
+            error: e?.response?.data?.message
         };
     }
 }
@@ -48,7 +48,7 @@ export const updateUser = async (user) => {
     catch (e) {
         return {
             data: [],
-            error: e.message
+            error: e?.response?.data?.message
         };
     }
 }
@@ -60,7 +60,7 @@ export const logOutUser = async (user) => {
     catch (e) {
         return {
             data: [],
-            error: e.message
+            error: e?.response?.data?.message
         };
     }
 }

@@ -19,8 +19,7 @@ app.use(bodyParser());
 
 app.use(mount('/api', router()));
 
-const PORT = 3001;
-
-app.listen(process.env.port || PORT, () => {
+const PORT = process.env.port || 3001;
+app.listen(PORT, () => {
     console.log('Running ...');
 });

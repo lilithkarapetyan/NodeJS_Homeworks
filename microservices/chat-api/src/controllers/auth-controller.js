@@ -8,7 +8,7 @@ const signIn = async ({ response: res, request: req }, next) => {
     try {
         const { email, password } = req.body;
         const foundUser = (await DB.find({ email }))[0]
-        const { id, password: realPassword } = foundUser || {};
+        const { id, password: realPassword, name } = foundUser || {};
 
         if (!password || !realPassword) {
             throw new BadRequestError('Invalid email or password');
@@ -19,7 +19,7 @@ const signIn = async ({ response: res, request: req }, next) => {
             throw new BadRequestError('Invalid email or password');
         }
 
-        const token = await JWT.sign(id, process.env.JWTSECRET || "SECRET");
+        const token = await JWT.sign( id, process.env.JWTSECRET || "SECRET");
         res.status = 200;
         res.body = { token };
         return;
@@ -29,7 +29,7 @@ const signIn = async ({ response: res, request: req }, next) => {
     }
 };
 
-const signUp = async ({request: req, response: res}, next) => {
+const signUp = async ({ request: req, response: res }, next) => {
     try {
         const { email, password, name } = req.body;
 

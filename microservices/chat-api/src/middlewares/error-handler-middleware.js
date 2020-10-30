@@ -3,8 +3,8 @@ const errorHandlerMiddleware = async (ctx, next) => {
         await next();
     } catch (err) {
         console.log(err)
-        ctx.status = err.status || 500;
-        ctx.body = {
+        ctx.response.status = err.status || 500;
+        ctx.response.body = {
             message: err.message || 'Internal server error',
         };
         ctx.app.emit('error', err, ctx);

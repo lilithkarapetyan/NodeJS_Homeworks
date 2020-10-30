@@ -7,7 +7,7 @@ import { validateEmail } from '../../../util';
 class SignUp extends Component {
     state = {
         fields: [
-            { id: "email", title: "E-mail", type: "email", validation: () => validateEmail(this.state.user.email)},
+            { id: "email", title: "E-mail", type: "email", validation: () => validateEmail(this.state.user.email) },
             { id: "password", title: "Password", type: "password" },
             { id: "name", title: "Full Name", type: "text" },
         ],
@@ -15,7 +15,8 @@ class SignUp extends Component {
             email: undefined,
             password: "",
             name: "",
-        }
+        },
+        error: null
     }
 
     onChange = (field, value) => {
@@ -29,10 +30,11 @@ class SignUp extends Component {
 
     onSignUp = () => {
         const user = { ...this.state.user }
-        user.jsExperience *= 1;
-        user.reactExperience *= 1;
-        register(user).then((data) => {
-            this.props.signedIn();
+        register(user).then(data => {
+            if (data.error)
+                this.setState({ ...this.state, error: data.error });
+            else
+                this.props.signedIn();
         })
     }
 
@@ -40,6 +42,7 @@ class SignUp extends Component {
         return (
             <div>
                 <Form fields={this.state.fields} user={this.state.user} onChange={this.onChange}></Form>
+                <p style={{ color: 'red' }}>{this.state.error}</p>
                 <Button variant="outlined" color="primary" onClick={this.onSignUp}>Sign Up</Button>
             </div>
         );

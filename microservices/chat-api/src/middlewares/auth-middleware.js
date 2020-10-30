@@ -9,7 +9,7 @@ const authMiddleware = async ({ response: res, request: req }, next) => {
             throw new UnauthorizedError();
         }
 
-        const userId = await JWT.verify(authorization.split(" ")[1], process.env.JWTSECRET || "SECRET");
+        const userId = await JWT.verify(authorization, process.env.JWTSECRET || "SECRET");
         if (!userId) {
             throw new UnauthorizedError();
         }

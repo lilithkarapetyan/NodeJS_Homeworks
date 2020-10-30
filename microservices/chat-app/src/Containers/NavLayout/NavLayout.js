@@ -9,8 +9,8 @@ class NavLayout extends Component {
     state = {
         showSideDrawer: false,
         showModal: false,
-        navItems: []
-    }
+        navItems: [],
+    };
 
 
     sideDrawerClosedHandler = () => {

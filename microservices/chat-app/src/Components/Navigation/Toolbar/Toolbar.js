@@ -5,13 +5,14 @@ import DrawerToggle from '../SideDrawer/DrawerToggle/DrawerToggle';
 import NavigationItem from '../NavigationItems/NavigationItem/NavigationItem'
 
 const Toolbar = (props) => {
-    let profile = "";
+    let chat = "";
     if (props.user) {
-        profile = (
-                <NavigationItem link="/profile" name="profile" style={{paddingBottom: "0px"}}>
-                    <img src={props.user.avatarUrl} style={{ height: "50px", borderRadius: "50%" }} alt="" />
+        chat = (
+            <>
+                <NavigationItem link="/chat" name="chat" style={{paddingBottom: "0px"}}>
+                    Chat
                 </NavigationItem>
-            )
+            </>)
     }
     return (
         <header className={classes.Toolbar}>
@@ -19,7 +20,7 @@ const Toolbar = (props) => {
             <nav className={classes.DisplayOnly}>
                 <NavigationItems navItems={props.navItems}></NavigationItems>
             </nav>
-            {profile}
+            {chat}
         </header>
     )
 };

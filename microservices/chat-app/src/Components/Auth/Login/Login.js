@@ -17,7 +17,8 @@ class Login extends Component {
         user: {
             email: undefined,
             password: ""
-        }
+        },
+        error: null,
     }
 
     onChange = (field, value) => {
@@ -33,8 +34,12 @@ class Login extends Component {
         const { from } = this.props.location.state || { from: { pathname: "/topics" } };
         const history = this.props.history
         login(this.state.user).then(data => {
-            this.props.userLoggedIn(data);
-            history.replace(from);
+            if (data.error)
+                this.setState({ ...this.state, error: data.error });
+            else {
+                this.props.userLoggedIn(data);
+                history.replace(from);
+            }
         })
     }
 
@@ -42,6 +47,7 @@ class Login extends Component {
         return (
             <div className={formClasses.FormContainer}>
                 <Form fields={this.state.fields} user={this.state.user} onChange={this.onChange}></Form>
+                <p style={{ color: 'red' }}>{this.state.error}</p>
                 <Button variant="outlined" color="primary" onClick={this.onLogin}>Log in</Button>
             </div>
         );

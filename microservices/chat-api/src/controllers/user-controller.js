@@ -6,6 +6,7 @@ const getMe = async ({ response: res, request: req }, next) => {
         user.password = undefined;
         res.status = 200;
         res.body = { user };
+        return;
     }
     catch (err) {
         throw err;
@@ -17,6 +18,7 @@ const getAll = async ({ response: res }, next) => {
         const users = await get();
         res.status = 200;
         res.body = { users };
+        return;
     }
     catch (err) {
         throw err;
@@ -36,6 +38,7 @@ const updateMe = async ({ response: res, request: req }, next) => {
 
         res.status = 200;
         res.body = { user: updatedUser };
+        return;
     }
     catch (err) {
         throw err;

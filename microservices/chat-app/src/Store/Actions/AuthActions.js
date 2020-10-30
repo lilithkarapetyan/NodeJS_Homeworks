@@ -33,7 +33,7 @@ const userLogOut = () => ({
     type: 'userLogOut'
 })
 
-export const updateProfile = (payload) => {
+export const updateChat = (payload) => {
     return (dispatch) => {
         updateUserInfo(payload).then(data => {
             dispatch(userUpdate(data))

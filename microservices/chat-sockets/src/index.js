@@ -1,34 +1,57 @@
-const path = require('path');
-const express = require('express');
-const app = express();
-const http = require('http').createServer(app);
+require('dotenv').config();
+
+const uuid = require('uuid');
+const axios = require('axios').default;
+const http = require('http').createServer();
 const io = require('socket.io')(http);
 const socketioJwt = require('socketio-jwt');
 
-app.use(express.static('public'));
-
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/index.html'));
-});
-
-// io.on('connect', socket => {
-//     console.log('a user connected');
-//     socket.on('disconnect', () => {
-//         console.log('user disconnected');
-//     });
-// });
-
+const messages = [];
+const participants = {};
 io.sockets
   .on('connection', socketioJwt.authorize({
     secret: 'SECRET',
-    timeout: 15000 // 15 seconds to send the authentication message
-  })).on('authenticated', function(socket) {
-    //this socket is authenticated, we are good to handle more events from it.
-    socket.emit('welcome', `Hello! ${socket.decoded_token}`);
+    timeout: 15000
+  }))
+  .on('authenticated', async (socket) => {
+    try {
+      const token = socket.encoded_token;
+      const id = socket.decoded_token;
+      const user = await axios.get('http://127.0.0.1:3001/api/users/me', {
+        headers: {
+          authorization: token
+        }
+      });
+
+      const { user: { name } } = user && user.data;
+      participants[id] = name;
+
+      socket.emit('welcome', `Hello ${name}!`);
+      socket.emit('messages', messages);
+
+      socket.on('newMessage', message => {
+        messages.push({
+          id: uuid.v4(),
+          createdAt: (new Date()).toLocaleTimeString(),
+          user: {
+            id,
+            name,
+          },
+          message: {
+            text: message,
+            isDeleted: false,
+          },
+        });
+        
+        io.emit('messages', messages);
+      })
+    } catch (err) {
+      console.log(err && err.response && err.response.data)
+    }
   });
 
 
-const PORT = 3002;
-http.listen(process.env.PORT || PORT, () => {
-    console.log('listening on *:3002');
+const PORT = process.env.PORT || 3002;
+http.listen(PORT, () => {
+  console.log(`listening on port ${PORT}`);
 });
