@@ -1,53 +1,50 @@
 require('dotenv').config();
 
-const uuid = require('uuid');
-const axios = require('axios').default;
 const http = require('http').createServer();
 const io = require('socket.io')(http);
-const socketioJwt = require('socketio-jwt');
 
-const messages = [];
-const participants = {};
+const {
+  authorize,
+  getUserInfo,
+  registerUser,
+} = require('./utils/users');
+
+const {
+  getMessages,
+  saveMessage,
+} = require('./utils/messages');
+
+const server = {
+  id: "",
+  name: "",
+}
+
 io.sockets
-  .on('connection', socketioJwt.authorize({
-    secret: 'SECRET',
-    timeout: 15000
-  }))
+  .on('connection', authorize())
   .on('authenticated', async (socket) => {
     try {
-      const token = socket.encoded_token;
-      const id = socket.decoded_token;
-      const user = await axios.get('http://127.0.0.1:3001/api/users/me', {
-        headers: {
-          authorization: token
-        }
-      });
-
-      const { user: { name } } = user && user.data;
-      participants[id] = name;
-
-      socket.emit('welcome', `Hello ${name}!`);
-      socket.emit('messages', messages);
+      const userInfo = await getUserInfo(socket);
+      const user = userInfo.data.user;
+      registerUser(user)
+      socket.broadcast.emit('serverMessage', saveMessage(`${user.name} entered the chat`, server ));
+      socket.emit('messages', getMessages());
 
       socket.on('newMessage', message => {
-        messages.push({
-          id: uuid.v4(),
-          createdAt: (new Date()).toLocaleTimeString(),
-          user: {
-            id,
-            name,
-          },
-          message: {
-            text: message,
-            isDeleted: false,
-          },
-        });
-        
-        io.emit('messages', messages);
+        const newMessage = saveMessage(message, user);
+        io.emit('newMessage', newMessage);
       })
+
+      socket.on('disconnect', () => {
+        const newMessage = saveMessage(`${user.name} left the chat`, server);
+        socket.broadcast.emit('newMessage', newMessage);
+      })
+
     } catch (err) {
-      console.log(err && err.response && err.response.data)
+      console.log(err);
     }
+  })
+  .on('unauthenticated', async (socket) => {
+    socket.emit('unauthenticated', 'Please, log in to continue');
   });
 
 

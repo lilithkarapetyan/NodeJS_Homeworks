@@ -9,7 +9,6 @@ import io from 'socket.io-client';
 
 class Chat extends Component {
     state = {
-        welcome: null,
         socket: null,
         message: '',
         messages: [],
@@ -23,16 +22,17 @@ class Chat extends Component {
             socket
                 .on('authenticated', () => console.log("authenticated"))
                 .emit('authenticate', { token })
-                .on('welcome', data => {
-                    this.setState({ ...this.state, welcome: data });
-                })
                 .on('messages', data => {
                     this.setState({ ...this.state, messages: data });
+                })
+                .on('newMessage', data => {
+                    this.setState({ ...this.state, messages: [...this.state.messages, data] });
                 })
         });
     }
 
     writeMessage = (e) => {
+        console.log("newmessage")
         e.preventDefault();
         this.state.socket.emit('newMessage', this.state.message);
         this.setState({ ...this.state, message: '' })
@@ -53,7 +53,6 @@ class Chat extends Component {
 
         return (
             <div>
-                {this.state.welcome}
                 <form className={classes.SendMessage}
                         onSubmit={this.writeMessage}>
                     <input
