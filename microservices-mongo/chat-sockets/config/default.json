@@ -1,0 +1,9 @@
+{
+    "user": {
+        "auth": {
+            "JWT_SECRET": "SECRET",
+            "timeout": 15000
+        },
+        "infoURL":  "http://127.0.0.1:3001/api/users/me"
+    }
+}
