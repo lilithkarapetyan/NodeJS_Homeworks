@@ -1,0 +1,47 @@
+.ChatContainer {
+    background-color: #F9F4F5;
+    width: 70%;
+    padding: 15px;
+    margin: 20px auto;
+}
+
+.ChatContainer img {
+    width: 200px;
+    float: right;
+    margin: 5px 10px;
+    border-radius: 50%;
+}
+.ChatItem {
+    min-height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 10px;
+}
+.ChatItem .Date{
+    float: right;
+    min-width: 110px;
+}
+.Message{
+    text-align: left;
+    width: 60%;
+    height: auto;
+    word-wrap: break-word;
+}
+.ChatContainer .Author{
+    font-weight: bold;
+}
+.SendMessage{
+    width: 250px;
+    margin: auto;
+}
+.SendButton{
+    background-color: #70587c!important;
+    color:white!important;
+}
+.SendInput{
+    padding: 8px;
+    border-radius: 4px;
+    margin: 4px;
+    border: 1px solid #70587c;
+}
