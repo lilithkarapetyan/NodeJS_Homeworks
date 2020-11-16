@@ -1,32 +1,45 @@
-const uuid = require('uuid');
+const { MessageModel } = require('chat-schemas');
+const mongoose = require('mongoose');
+const redisClient = require('../redisClient');
 
-const messages = [];
-
-const saveMessage = (message, { _id, firstName, lastName }) => {
+const saveMessage = async (message, { _id }) => {
     const newMessage = {
-        id: uuid.v4(),
-        createdAt: (new Date()).toLocaleTimeString(),
-        user: {
-            _id,
-            firstName,
-            lastName,
-        },
-        message: {
-            text: message,
-            isDeleted: false,
-        },
-    }
-    console.log("saved", message)
-    messages.push(newMessage);
-    return newMessage;
+        _id: new mongoose.Types.ObjectId(),
+        user: _id,
+        text: message,
+        type: 'user_message',
+    };
+
+    const saved = (await MessageModel.create(newMessage));
+    await saved.save();
+    const messageWithUser = await MessageModel.findById(saved._id).populate('user').exec();    
+    return messageWithUser;
+};
+const saveServerMessage = async (message) => {
+    const newMessage = {
+        _id: new mongoose.Types.ObjectId(),
+        text: message,
+        type: 'system_message',
+    };
+
+    const saved = (await MessageModel.create(newMessage));
+    await saved.save();
+    return saved;
 };
 
-const getMessages = () => {
-    return messages;
+const getMessages = async () => {
+    try{
+        const messages = await MessageModel.find().populate('user').exec();
+        return messages;
+    }
+    catch(err){
+        console.log(err);
+    }
 };
 
 module.exports = {
     getMessages,
     saveMessage,
+    saveServerMessage,
 };
 

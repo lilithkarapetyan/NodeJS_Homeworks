@@ -23,9 +23,11 @@ class Chat extends Component {
                 .on('authenticated', () => console.log("authenticated"))
                 .emit('authenticate', { token })
                 .on('messages', data => {
-                    this.setState({ ...this.state, messages: data });
+                    console.log(data)
+                    this.setState({ ...this.state, messages: [...this.state.messages, ...data]});
                 })
                 .on('newMessage', data => {
+                    console.log(data)
                     this.setState({ ...this.state, messages: [...this.state.messages, data] });
                 })
         });
@@ -53,6 +55,15 @@ class Chat extends Component {
 
         return (
             <div>
+                <div className={classes.ChatContainer}>
+                    {this.state.messages.map(item => (
+                        <div key={item.id} className={classes.ChatItem}>
+                            <div className={classes.Author}>{item.type === 'user_message' && `${item.user?.firstName} ${item.user?.lastName}:`} </div>
+                            <div className={classes.Message}>{item.text}</div>
+                            <div className={classes.Date}>At {new Date(item.createdAt).toLocaleTimeString()}</div>
+                        </div>
+                    ))}
+                </div>
                 <form className={classes.SendMessage}
                         onSubmit={this.writeMessage}>
                     <input
@@ -67,15 +78,6 @@ class Chat extends Component {
                         Send
                     </Button>
                 </form>
-                <div className={classes.ChatContainer}>
-                    {this.state.messages.map(item => (
-                        <div key={item.id} className={classes.ChatItem}>
-                            <div className={classes.Author}>{`${item.user.firstName} ${item.user.lastName}`}: </div>
-                            <div className={classes.Message}>{item.message.text}</div>
-                            <div className={classes.Date}>At {item.createdAt}</div>
-                        </div>
-                    ))}
-                </div>
             </div>);
     }
 }

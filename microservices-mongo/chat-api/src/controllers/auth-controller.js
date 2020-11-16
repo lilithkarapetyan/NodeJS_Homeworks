@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const JWT = require('jsonwebtoken');
+const mongoose = require('mongoose');
 
 const { UserModel } = require('chat-schemas');
 const { BadRequestError } = require("../errors");
@@ -33,6 +34,7 @@ const signUp = async (req, res, next) => {
 
         const hashedPassword = await bcrypt.hash(password, process.env.SALTROUNDS * 1 || 1);
         const user = {
+            _id: new mongoose.Types.ObjectId(),
             email,
             password: hashedPassword,
             firstName,
