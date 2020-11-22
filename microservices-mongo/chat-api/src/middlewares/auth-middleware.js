@@ -1,6 +1,6 @@
 const JWT = require('jsonwebtoken');
 const { UserModel } = require('chat-schemas');
-const { UnauthorizedError } = require('../errors');
+const { UnauthorizedError } = require('../Errors');
 const authMiddleware = async (req, res, next) => {
     try {
         const { authorization } = req.headers;

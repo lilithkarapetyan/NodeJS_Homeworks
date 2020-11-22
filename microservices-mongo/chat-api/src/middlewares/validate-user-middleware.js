@@ -1,4 +1,4 @@
-const { BadRequestError } = require('../errors');
+const { BadRequestError } = require('../Errors');
 const validateUserMiddleware = ({ updating = false } = {}) => {
     return async (req, res, next) => {
         try {

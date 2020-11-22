@@ -3,12 +3,12 @@ const JWT = require('jsonwebtoken');
 const mongoose = require('mongoose');
 
 const { UserModel } = require('chat-schemas');
-const { BadRequestError } = require("../errors");
+const { BadRequestError } = require("../Errors");
 
 const signIn = async (req, res, next) => {
     try {
         const { email, password } = req.body;
-        const foundUser = (await UserModel.findOne({ email }))._doc;
+        const foundUser = (await UserModel.findOne({ email }) || { })._doc;
         const { _id, password: realPassword } = JSON.parse(JSON.stringify(foundUser)) || {};
 
         if (!password || !realPassword) {

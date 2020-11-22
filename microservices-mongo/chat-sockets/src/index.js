@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: `${__dirname}/.env` });
 const http = require('http').createServer();
 const io = require('socket.io')(http);
 const mongoose = require('mongoose');
@@ -6,9 +6,9 @@ const redisClient = require('./utils/redisClient');
 
 const { promisify } = require("util");
 
+mongoose.set('useCreateIndex', true);
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
-mongoose.set('useCreateIndex', true);
 mongoose.set('useUnifiedTopology', true);
 mongoose.connect(process.env.DBURL);
 
@@ -39,7 +39,7 @@ io.sockets
       const user = userInfo.data.user;
       registerUser(user);
       redisClient.lpush('activeUsers', JSON.stringify(user), (err, isOk) => console.log(err, isOk));
-      
+
       const allMessages = await getMessages();
       socket.emit('messages', allMessages);
       const enterMessage = await saveServerMessage(`${user.firstName} ${user.lastName} entered the chat`);
@@ -64,11 +64,9 @@ io.sockets
     socket.emit('unauthenticated', 'Please, log in to continue');
   });
 
-
 redisClient.on("error", function (error) {
   console.error(error);
 });
-
 
 const PORT = process.env.PORT || 3002;
 http.listen(PORT, () => {

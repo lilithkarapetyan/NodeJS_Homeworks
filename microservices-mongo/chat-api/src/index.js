@@ -1,5 +1,5 @@
 const dotenv = require('dotenv');
-dotenv.config();
+dotenv.config({ path: `${__dirname}/.env` });
 
 const cors = require('cors');
 const morgan = require('morgan');
@@ -10,9 +10,9 @@ const routes = require('./routers');
 const { PORT } = require('./config/constants');
 const { errorHandlerMiddleware } = require('./middlewares');
 
+mongoose.set('useCreateIndex', true);
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
-mongoose.set('useCreateIndex', true);
 mongoose.set('useUnifiedTopology', true);
 
 const setup = [];
@@ -33,3 +33,13 @@ Promise.all(setup).then(() => {
         console.log('Running ...');
     });
 }).catch(console.log);
+
+
+process.on('SIGTERM', () => {
+    console.info('SIGTERM signal received.');
+    app.close(() => {
+        mongoose.connection.close(false, () => {
+            process.exit(0);
+        });
+    });
+});
