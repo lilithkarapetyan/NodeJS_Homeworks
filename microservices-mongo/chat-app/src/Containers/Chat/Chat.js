@@ -12,7 +12,8 @@ class Chat extends Component {
         socket: null,
         message: '',
         messages: [],
-    }
+        activeNow: [],
+    };
 
     componentDidMount() {
         const socket = io('localhost:3002');
@@ -24,11 +25,15 @@ class Chat extends Component {
                 .emit('authenticate', { token })
                 .on('messages', data => {
                     console.log(data)
-                    this.setState({ ...this.state, messages: [...this.state.messages, ...data]});
+                    this.setState({ ...this.state, messages: [...data] });
                 })
                 .on('newMessage', data => {
                     console.log(data)
                     this.setState({ ...this.state, messages: [...this.state.messages, data] });
+                })
+                .on('onlineUsers', data => {
+                    console.log(data)
+                    this.setState({ ...this.state, activeNow: [...data] })
                 })
         });
     }
@@ -54,31 +59,44 @@ class Chat extends Component {
         })
 
         return (
-            <div>
-                <div className={classes.ChatContainer}>
-                    {this.state.messages.map(item => (
-                        <div key={item.id} className={classes.ChatItem}>
-                            <div className={classes.Author}>{item.type === 'user_message' && `${item.user?.firstName} ${item.user?.lastName}:`} </div>
-                            <div className={classes.Message}>{item.text}</div>
-                            <div className={classes.Date}>At {new Date(item.createdAt).toLocaleTimeString()}</div>
-                        </div>
-                    ))}
+            <>
+                <div className={classes.Container}>
+                    <div className={classes.ActiveNow}>
+                        <b>Active now:</b>
+                        {this.state.activeNow.map(item => (
+                            <div key={item.id} className={classes.ChatItem}>
+                                <div className={classes.Author}><span className={classes.Dot}></span>{`${item?.firstName} ${item?.lastName}`} </div>
+                            </div>
+                        ))}
+                    </div>
+                    <div className={classes.ChatContainer}>
+                        {this.state.messages.map(item => (
+                            <div key={item.id} className={classes.ChatItem}>
+                                <div className={classes.Author}>{item.type === 'user_message' && `${item.user?.firstName} ${item.user?.lastName}:`} </div>
+                                <div className={classes.Message}>{item.text}</div>
+                                <div className={classes.Date}>At {new Date(item.createdAt).toLocaleTimeString()}</div>
+                            </div>
+                        ))}
+                    </div>
+
                 </div>
                 <form className={classes.SendMessage}
-                        onSubmit={this.writeMessage}>
-                    <input
-                        className={classes.SendInput}
-                        placeholder="Write something"
-                        value={this.state.message}
-                        onChange={(e) => this.onChange(e)}
-                    />
+                    onSubmit={this.writeMessage}>
+                    <div>
+                        <input
+                            className={classes.SendInput}
+                            placeholder="Write something"
+                            value={this.state.message}
+                            onChange={(e) => this.onChange(e)}
+                        />
 
-                    <Button type="submit"
-                        className={classes.SendButton}>
-                        Send
+                        <Button type="submit"
+                            className={classes.SendButton}>
+                            Send
                     </Button>
+                    </div>
                 </form>
-            </div>);
+            </>);
     }
 }
 

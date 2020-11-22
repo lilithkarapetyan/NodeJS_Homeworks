@@ -9,12 +9,12 @@ const signIn = async (req, res, next) => {
     try {
         const { email, password } = req.body;
         const foundUser = (await UserModel.findOne({ email }) || { })._doc;
-        const { _id, password: realPassword } = JSON.parse(JSON.stringify(foundUser)) || {};
+        const { _id, password: realPassword } = JSON.parse(JSON.stringify(foundUser || '')) || {};
 
         if (!password || !realPassword) {
             return next(new BadRequestError('Invalid email or password'));
         }
-        console.log(password, realPassword)
+
         const isAuth = await bcrypt.compare(password, realPassword);
         if (!isAuth) {
             return next(new BadRequestError('Invalid email or password'));

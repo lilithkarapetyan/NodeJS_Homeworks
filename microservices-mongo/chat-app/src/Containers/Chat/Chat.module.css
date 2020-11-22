@@ -1,8 +1,16 @@
+.Container{
+    display: flex;
+    width: 100%;
+    justify-content: space-evenly;
+}
+
 .ChatContainer {
     background-color: #F9F4F5;
     width: 70%;
     padding: 15px;
     margin: 20px auto;
+    height: 70vh;
+    overflow-y: scroll;
 }
 
 .ChatContainer img {
@@ -24,7 +32,7 @@
 }
 .Message{
     text-align: left;
-    width: 60%;
+    width: 70%;
     height: auto;
     word-wrap: break-word;
 }
@@ -32,16 +40,47 @@
     font-weight: bold;
 }
 .SendMessage{
-    width: 250px;
+    width: 100%;
+    margin: auto;
+    position: fixed;
+    bottom: 15px;
+}
+
+.SendMessage div{
+    display: block;
+    width: 300px;
     margin: auto;
 }
+
 .SendButton{
     background-color: #70587c!important;
     color:white!important;
+    display: inline;
+    width: 30px;
 }
 .SendInput{
+    width: 200px;
+    margin: auto;
     padding: 8px;
     border-radius: 4px;
     margin: 4px;
+    display: inline-block;
     border: 1px solid #70587c;
+}
+
+.ActiveNow{
+    width: 20%;
+    background: #eee;
+    margin: 20px;
+    padding: 15px;
+    height: 100%;
+}
+
+.Dot{
+    height: 10px;
+    width: 10px;
+    background-color: #32CD32;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
 }
