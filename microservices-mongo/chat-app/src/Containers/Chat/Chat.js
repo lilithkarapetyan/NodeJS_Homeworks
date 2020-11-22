@@ -2,12 +2,19 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import classes from './Chat.module.css';
 import { Button } from '@material-ui/core';
+import sound from '../../assets/newMessage.ogg';
 
 import { logOut, updateChat } from '../../Store/Actions/AuthActions'
 import { Redirect } from 'react-router-dom';
 import io from 'socket.io-client';
 
 class Chat extends Component {
+    constructor(props) {
+        super(props)
+        this.scrollRef = React.createRef()  
+        this.audio = new Audio(sound);
+    }
+
     state = {
         socket: null,
         message: '',
@@ -16,7 +23,7 @@ class Chat extends Component {
     };
 
     componentDidMount() {
-        const socket = io('localhost:3002');
+        const socket = io('64.227.19.142:3002');
         this.setState({ ...this.state, socket });
         const token = sessionStorage.getItem('token');
         socket.on('connect', () => {
@@ -28,18 +35,22 @@ class Chat extends Component {
                     this.setState({ ...this.state, messages: [...data] });
                 })
                 .on('newMessage', data => {
-                    console.log(data)
                     this.setState({ ...this.state, messages: [...this.state.messages, data] });
+                    
+                    this.audio.play();
                 })
                 .on('onlineUsers', data => {
                     console.log(data)
                     this.setState({ ...this.state, activeNow: [...data] })
                 })
         });
+        this.scrollRef.current && (this.scrollRef.current.scrollTop = this.scrollRef.current.scrollHeight);
+    }
+    componentDidUpdate(){
+        this.scrollRef.current && (this.scrollRef.current.scrollTop = this.scrollRef.current.scrollHeight);
     }
 
     writeMessage = (e) => {
-        console.log("newmessage")
         e.preventDefault();
         this.state.socket.emit('newMessage', this.state.message);
         this.setState({ ...this.state, message: '' })
@@ -50,6 +61,7 @@ class Chat extends Component {
     }
 
     render() {
+
         setTimeout(() => {
             if (!(this.props.user && this.props.user.token)) {
                 return (
@@ -57,7 +69,6 @@ class Chat extends Component {
                 );
             }
         })
-
         return (
             <>
                 <div className={classes.Container}>
@@ -69,7 +80,7 @@ class Chat extends Component {
                             </div>
                         ))}
                     </div>
-                    <div className={classes.ChatContainer}>
+                    <div className={classes.ChatContainer} ref={this.scrollRef}>
                         {this.state.messages.map(item => (
                             <div key={item.id} className={classes.ChatItem}>
                                 <div className={classes.Author}>{item.type === 'user_message' && `${item.user?.firstName} ${item.user?.lastName}:`} </div>
