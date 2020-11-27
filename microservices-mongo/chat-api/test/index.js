@@ -1,7 +1,8 @@
 const app = require("../src");
 const chai = require("chai");
 const chaiHttp = require("chai-http");
-
+console.log(process.env.DBURL);
+console.log(process.env.JWTSECRET);
 const { expect } = chai;
 chai.use(chaiHttp);
 describe("Server!", () => {
